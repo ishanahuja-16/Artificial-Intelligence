@@ -1,0 +1,79 @@
+import random
+
+def display_board(board):
+    for row in board:
+        print(" | ".join(row))
+        print("--" * 9)
+
+def get_player_move(board):
+    while True:
+        try:
+            move = int(input("Player X, enter your move (box number 0-8): "))
+            if 0 <= move < 9:
+                row = move // 3
+                col = move % 3
+                if board[row][col] == ' ':
+                    return row, col
+                else:
+                    print("That spot is taken. Choose an empty spot.")
+            else:
+                print("Invalid input. Box number must be between 0 and 8.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+def get_computer_move(board):
+    empty_cells = [(r, c) for r in range(3) for c in range(3) if board[r][c] == ' ']
+    return random.choice(empty_cells)
+
+def check_win(board, player):
+    
+    for row in board:
+        if all(cell == player for cell in row):
+            return True
+    
+    for col in range(3):
+        if all(board[row][col] == player for row in range(3)):
+            return True
+   
+    if all(board[i][i] == player for i in range(3)):
+        return True
+    if all(board[i][2 - i] == player for i in range(3)):
+        return True
+    return False
+
+def check_draw(board):
+    box = [cell for row in board for cell in row]
+    return ' ' not in box
+
+
+board = [[' ' for _ in range(3)] for _ in range(3)]
+
+while True:
+    
+    display_board(board)
+    row, col = get_player_move(board)
+    board[row][col] = 'X'
+
+    if check_win(board, 'X'):
+        display_board(board)
+        print("Player X wins!")
+        break
+
+    if check_draw(board):
+        display_board(board)
+        print("It's a draw!")
+        break
+
+    row, col = get_computer_move(board)
+    board[row][col] = 'O'
+    print("Computer (O) played at:", row * 3 + col)
+
+    if check_win(board, 'O'):
+        display_board(board)
+        print("Computer (O) wins!")
+        break
+
+    if check_draw(board):
+        display_board(board)
+        print("It's a draw!")
+        break
